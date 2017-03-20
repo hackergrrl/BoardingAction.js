@@ -4,13 +4,21 @@ var PIXI = require('pixi.js')
 var app = new PIXI.Application(640, 480, {backgroundColor : 0x101644})
 document.body.appendChild(app.view)
 
-// --- components ---
+require('./camera').install(recs, app)
+require('./physics').install(recs)
 
-function Sprite () {
-  var sprite = PIXI.Sprite.fromImage('assets/sprites/bunny.png')
+var Physics = require('./physics').Physics
+
+function makeSprite (imagePath) {
+  var sprite = PIXI.Sprite.fromImage(imagePath)
   sprite.anchor.set(0.5)
   app.stage.addChild(sprite)
   return sprite
+}
+
+// --- components ---
+
+function PixiSprite () {
 }
 
 function Starfield () {
@@ -24,18 +32,6 @@ function Starfield () {
   return sprite
 }
 
-function Camera () {
-}
-
-function Body () {
-  this.x = 0
-  this.y = 0
-  this.xv = 0
-  this.yv = 0
-  this.rot = 0
-  this.rotVel = 0
-}
-
 // --- systems ---
 
 recs.system('scroll stars', [Starfield], function (e) {
@@ -45,48 +41,31 @@ recs.system('scroll stars', [Starfield], function (e) {
   e.starfield.tilePosition.y = app.stage.y
 })
 
-recs.system('auto-pan camera', [Body, Camera], function (e) {
-  e.body.x += 0.2
-  e.body.y += 0.3
-
-  app.stage.x = -e.body.x
-  app.stage.y = -e.body.y
-})
-
-recs.system('basic physics', [Body], function (d, delta) {
-  d.body.x += d.body.xv * delta
-  d.body.y += d.body.yv * delta
-  d.body.rot += d.body.rotVel * delta
-})
-
-recs.system('sync body<->sprite', [Body, Sprite], function (e) {
-  e.sprite.x = e.body.x
-  e.sprite.y = e.body.y
-  e.sprite.rotation = e.body.rot
+recs.system('sync physics<->pixiSprite', [Physics, PixiSprite], function (e) {
+  e.pixiSprite.x = e.physics.x
+  e.pixiSprite.y = e.physics.y
+  e.pixiSprite.rotation = e.physics.rot
 })
 
 // --- entities ---
 
-recs.entity([Body, Camera], function (e) {
+recs.entity('star bg', [Starfield], function (e) {
 })
 
-recs.entity([Starfield], function (e) {
+var Ship = [Physics, PixiSprite]
+recs.entity('player ship', Ship, function (e) {
+  e.physics.x = 300
+  e.physics.y = 150
+  e.physics.xv = 0.5
+  e.physics.yv = 0
+  e.physics.rotVel = 0.1
+
+  e.pixiSprite = makeSprite('assets/sprites/fighter.png')
 })
 
-for (var i=0; i < 10; i++) {
-  recs.entity([Body, Sprite], function (e) {
-    e.body.x = 300
-    e.body.y = 200 - i * 10
-    e.body.xv = 1
-    e.body.yv = 0
-
-    e.sprite.scale.x = 0.5 + i * 0.2
-    e.sprite.scale.y = 0.5 + i * 0.2
-
-    e.body.rotVel = 0.1
-  })
-}
+// --- run game ---
 
 app.ticker.add(function(delta) {
   recs.tick(delta)
 })
+

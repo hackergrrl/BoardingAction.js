@@ -16,7 +16,7 @@
   "dependencies": {
     "bankai": "^5.4.0",
     "pixi.js": "^4.4.2",
-    "recs": "0.0.1"
+    "recs": "0.1.0"
   },
   "devDependencies": {
     "standard": "~8.3.0"
