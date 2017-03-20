@@ -7,7 +7,7 @@ function Physics () {
   this.rotVel = 0
 }
 
-module.exports.install = function (recs) {
+Physics.install = function (recs) {
   recs.system('basic physics', [Physics], function (d, delta) {
     d.physics.x += d.physics.xv * delta
     d.physics.y += d.physics.yv * delta
@@ -15,4 +15,4 @@ module.exports.install = function (recs) {
   })
 }
 
-module.exports.Physics = Physics
+module.exports = Physics

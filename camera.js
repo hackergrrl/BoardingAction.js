@@ -1,9 +1,9 @@
-var Physics = require('./physics').Physics
+var Physics = require('./physics')
 
 function Camera () {
 }
 
-module.exports.install = function (recs, app) {
+Camera.install = function (recs, app) {
   recs.system('auto-pan camera', [Physics, Camera], function (e) {
     e.physics.x += 0.2
     e.physics.y += 0.3
@@ -13,4 +13,4 @@ module.exports.install = function (recs, app) {
   })
 }
 
-module.exports.Camera = Camera
+module.exports = Camera

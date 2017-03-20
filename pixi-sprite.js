@@ -1,9 +1,9 @@
-var Physics = require('./physics').Physics
+var Physics = require('./physics')
 
 function PixiSprite () {
 }
 
-module.exports.install = function (recs, app) {
+PixiSprite.install = function (recs, app) {
   recs.system('sync physics<->pixiSprite', [Physics, PixiSprite], function (e) {
     e.pixiSprite.x = e.physics.x
     e.pixiSprite.y = e.physics.y
@@ -11,5 +11,4 @@ module.exports.install = function (recs, app) {
   })
 }
 
-module.exports.PixiSprite = PixiSprite
-
+module.exports = PixiSprite

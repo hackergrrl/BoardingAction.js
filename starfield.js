@@ -1,5 +1,3 @@
-module.exports.Starfield = Starfield
-
 function Starfield () {
   var sprite = PIXI.extras.TilingSprite.fromImage('assets/sprites/stars.png')
   sprite.width = app.renderer.width
@@ -11,7 +9,7 @@ function Starfield () {
   return sprite
 }
 
-module.exports.install = function (recs, app) {
+Starfield.install = function (recs, app) {
   recs.system('scroll stars', [Starfield], function (e) {
     e.starfield.x = -app.stage.x
     e.starfield.y = -app.stage.y
@@ -19,3 +17,5 @@ module.exports.install = function (recs, app) {
     e.starfield.tilePosition.y = app.stage.y
   })
 }
+
+module.exports = Starfield

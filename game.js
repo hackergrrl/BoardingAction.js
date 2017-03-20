@@ -1,10 +1,10 @@
 var recs = require('recs')()
 var PIXI = require('pixi.js')
 
-var Camera = require('./camera').Camera
-var Physics = require('./physics').Physics
-var PixiSprite = require('./pixi-sprite').PixiSprite
-var Starfield = require('./starfield').Starfield
+var Camera = require('./camera')
+var Physics = require('./physics')
+var PixiSprite = require('./pixi-sprite')
+var Starfield = require('./starfield')
 
 // --- app setup ---
 var app = new PIXI.Application(640, 480, {backgroundColor : 0x101644})
@@ -12,10 +12,10 @@ document.body.appendChild(app.view)
 global.app = app
 
 // --- import systems ---
-require('./camera').install(recs, app)
-require('./starfield').install(recs, app)
-require('./physics').install(recs)
-require('./pixi-sprite').install(recs)
+Camera.install(recs, app)
+Starfield.install(recs, app)
+Physics.install(recs)
+PixiSprite.install(recs)
 
 // --- helper functions ---
 function makeSprite (imagePath) {
