@@ -1,6 +1,7 @@
 var recs = require('recs')()
 var PIXI = require('pixi.js')
 var kb = require('kb-controls')
+var mousePos = require('mouse-position')
 
 var Camera = require('./camera')
 var Physics = require('./physics')
@@ -21,6 +22,7 @@ var ctl = kb({
   // '<left>': 'strafe_left'
 // , '<mouse 1>': 'fire'
 })
+var mouse = mousePos(app.view)
 
 // --- install systems ---
 Camera.install(recs, app)
@@ -62,6 +64,10 @@ recs.system('ship player controls', [Physics, ShipController], function (e) {
   if (ctl.left) {
     e.physics.xv -= speed
   }
+
+  var dx = mouse[0] - app.renderer.width/2
+  var dy = mouse[1] - app.renderer.height/2
+  e.physics.rot = Math.atan2(dy, dx)
 })
 
 recs.system('camera follow', [Camera, Physics, CameraFollow], function (e) {

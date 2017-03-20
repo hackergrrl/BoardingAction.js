@@ -16,6 +16,7 @@
   "dependencies": {
     "bankai": "^5.4.0",
     "kb-controls": "^0.2.0",
+    "mouse-position": "^2.0.1",
     "pixi.js": "^4.4.2",
     "recs": "0.1.0"
   },
