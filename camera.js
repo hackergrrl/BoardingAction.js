@@ -11,9 +11,6 @@ module.exports.install = function (recs, app) {
     app.stage.x = -e.physics.x
     app.stage.y = -e.physics.y
   })
-
-  recs.entity('camera', [Physics, Camera], function (e) {
-  })
 }
 
 module.exports.Camera = Camera

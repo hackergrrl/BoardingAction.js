@@ -1,14 +1,23 @@
 var recs = require('recs')()
 var PIXI = require('pixi.js')
 
+var Camera = require('./camera').Camera
+var Physics = require('./physics').Physics
+var PixiSprite = require('./pixi-sprite').PixiSprite
+var Starfield = require('./starfield').Starfield
+
+// --- app setup ---
 var app = new PIXI.Application(640, 480, {backgroundColor : 0x101644})
 document.body.appendChild(app.view)
+global.app = app
 
+// --- import systems ---
 require('./camera').install(recs, app)
+require('./starfield').install(recs, app)
 require('./physics').install(recs)
+require('./pixi-sprite').install(recs)
 
-var Physics = require('./physics').Physics
-
+// --- helper functions ---
 function makeSprite (imagePath) {
   var sprite = PIXI.Sprite.fromImage(imagePath)
   sprite.anchor.set(0.5)
@@ -18,39 +27,11 @@ function makeSprite (imagePath) {
 
 // --- components ---
 
-function PixiSprite () {
-}
-
-function Starfield () {
-  var sprite = PIXI.extras.TilingSprite.fromImage('assets/sprites/stars.png')
-  sprite.width = app.renderer.width
-  sprite.height = app.renderer.height
-  sprite.tileScale.x = 0.5
-  sprite.tileScale.y = 0.5
-  sprite.anchor.set(0, 0)
-  app.stage.addChild(sprite)
-  return sprite
-}
-
 // --- systems ---
-
-recs.system('scroll stars', [Starfield], function (e) {
-  e.starfield.x = -app.stage.x
-  e.starfield.y = -app.stage.y
-  e.starfield.tilePosition.x = app.stage.x
-  e.starfield.tilePosition.y = app.stage.y
-})
-
-recs.system('sync physics<->pixiSprite', [Physics, PixiSprite], function (e) {
-  e.pixiSprite.x = e.physics.x
-  e.pixiSprite.y = e.physics.y
-  e.pixiSprite.rotation = e.physics.rot
-})
 
 // --- entities ---
 
-recs.entity('star bg', [Starfield], function (e) {
-})
+recs.entity('star bg', [Starfield], function (e) {})
 
 var Ship = [Physics, PixiSprite]
 recs.entity('player ship', Ship, function (e) {
@@ -62,6 +43,8 @@ recs.entity('player ship', Ship, function (e) {
 
   e.pixiSprite = makeSprite('assets/sprites/fighter.png')
 })
+
+recs.entity('camera', [Physics, Camera], function (e) {})
 
 // --- run game ---
 
