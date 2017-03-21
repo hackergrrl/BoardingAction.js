@@ -9,7 +9,11 @@ var PixiSprite = require('./pixi-sprite')
 var Starfield = require('./starfield')
 
 // --- app setup ---
-var app = new PIXI.Application(640, 480, {backgroundColor : 0x101644})
+document.body.style.margin = '0px'
+document.body.style.overflow = 'hidden'
+var app = new PIXI.Application(window.innerWidth, window.innerHeight, {
+  backgroundColor : 0x101644
+})
 document.body.appendChild(app.view)
 global.app = app
 
