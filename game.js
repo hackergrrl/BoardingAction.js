@@ -100,43 +100,89 @@ recs.entity('player ship', Ship, function (e) {
   player = e
 })
 
-var FighterPrefab = function (faction, cb) {
+for (var i = 0; i < 4; i++) {
+spawnFormation(
+  Math.random()*640*4,
+  Math.random()*480*4,
+  Math.random()*Math.PI*2,
+  rand(0, 1) * 2 + 1,
+  Math.random() * 64)
+}
+
+function FighterPrefab (faction, cb) {
   recs.entity('fighter ship', [Physics, PixiSprite], function (e) {
     e.pixiSprite = makeSprite('assets/sprites/_fighter.png')
-    e.pixiSprite.tint = 0xd91c1c
+    e.pixiSprite.tint = faction
     cb(e)
   })
 }
 
-recs.entity('federation gunship', [Physics, PixiSprite], function (e) {
-  e.physics.x = 200
-  e.physics.y = 350
-  e.physics.xv = 0.25
-  e.physics.yv = 0
-  e.pixiSprite = makeSprite('assets/sprites/_gunship.png')
-  e.pixiSprite.tint = 0xd91c1c
-})
-FighterPrefab(0xd91c1c, function (e) {
-  e.physics.x = 280
-  e.physics.y = 280
-  e.physics.xv = 0.25
-  e.physics.yv = 0
-})
-FighterPrefab(0xd91c1c, function (e) {
-  e.physics.x = 280
-  e.physics.y = 420
-  e.physics.xv = 0.25
-  e.physics.yv = 0
-})
-recs.entity('civilian cargo ship', [Physics, PixiSprite], function (e) {
-  e.physics.x = 100
-  e.physics.y = 100
-  e.physics.xv = 0.15
-  e.physics.yv = 0.15
-  e.physics.rot = Math.PI / 4
-  e.pixiSprite = makeSprite('assets/sprites/_cargoship.png')
-  e.pixiSprite.tint = 0xffff4e
-})
+function GunshipPrefab (faction, cb) {
+  recs.entity('gunship', [Physics, PixiSprite], function (e) {
+    e.pixiSprite = makeSprite('assets/sprites/_gunship.png')
+    e.pixiSprite.tint = faction
+    cb(e)
+  })
+}
+
+function CargoshipPrefab (faction, cb) {
+  recs.entity('cargo ship', [Physics, PixiSprite], function (e) {
+    e.pixiSprite = makeSprite('assets/sprites/_cargoship.png')
+    e.pixiSprite.tint = faction
+    cb(e)
+  })
+}
+
+function spawnFormation (x, y, rot, num, padding) {
+  var prefabs = {
+    'fighter': FighterPrefab,
+    'gunship': GunshipPrefab,
+    'cargo': CargoshipPrefab
+  }
+
+  var major = Math.min(num, Math.random() < 0.75 ? 1 : 3)
+  var minor = num - major
+  console.log(major, minor)
+
+  var tint = Math.random() < 0.5 ? 0xffff4e : 0xd91c1c
+
+  var ships = []
+  var radii = []
+
+  for (var i = 0; i < major; i++) {
+    if (Math.random() < 0.5) {
+      GunshipPrefab(tint, function (e) {
+        radii.push(e.pixiSprite.texture.baseTexture.width * 0.4)
+        ships.push(e)
+      })
+    } else {
+      CargoshipPrefab(tint, function (e) {
+        radii.push(e.pixiSprite.texture.baseTexture.width * 0.4)
+        ships.push(e)
+      })
+    }
+  }
+  for (var i = 0; i < minor; i++) {
+    FighterPrefab(tint, function (e) {
+      radii.push(e.pixiSprite.texture.baseTexture.width * 0.25)
+      ships.push(e)
+    })
+  }
+
+  var coords = generateFormation(radii, padding)
+  for (var i = 0; i < ships.length; i++) {
+// p'x = cos(theta) * (px-ox) - sin(theta) * (py-oy) + ox
+// p'y = sin(theta) * (px-ox) + cos(theta) * (py-oy) + oy
+    ships[i].physics.x = x + Math.cos(rot) * coords[i][0] - Math.sin(rot) * coords[i][1]
+    ships[i].physics.y = y + Math.sin(rot) * coords[i][0] + Math.cos(rot) * coords[i][1]
+    ships[i].physics.rot = rot
+    ships[i].physics.xv = Math.cos(rot) * 0.25
+    ships[i].physics.yv = Math.sin(rot) * 0.25
+  }
+}
+
+// 0xffff4e
+// 0xd91c1c
 
 for (var i = 0; i < 4; i++) {
   recs.entity('space station', [Physics, PixiSprite], function (e) {
@@ -162,3 +208,59 @@ app.ticker.add(function(delta) {
   recs.tick(delta)
 })
 
+
+// Takes a list of radii and returns positions.
+// [Float] -> [[Float, Float]]
+function generateFormation (radii, padding) {
+  var res = []
+
+  if (radii.length % 2 === 0) {
+    throw new Error('must be odd number of units')
+  }
+
+  var r = radii.shift()
+  res.push([0, 0, r])
+
+  var radius = res[0] ? res[0][2] : 0
+  while (radii.length > 0) {
+    var r = radii.shift()
+
+    while (true) {
+      var x = Math.random() * radius * 2 - radius
+      var y = Math.random() * radius * 2 + r
+
+      if (!isPointOpen(x, y, r)) {
+        radius += 16
+        continue
+      }
+      else {
+        res.push([x, y, r])
+        res.push([x, -y, r])
+        radii.shift()
+        break
+      }
+    }
+  }
+
+  return res
+
+  function isPointOpen (x, y, r) {
+    for (var i=0; i < res.length; i++) {
+      var p = res[i]
+      if (distance(x, y, p[0], p[1]) < padding * 2 + r + p[2]) {
+        return false
+      }
+    }
+    return true
+  }
+}
+
+function distance (x1, y1, x2, y2) {
+  var dx = x2 - x1
+  var dy = y2 - y1
+  return Math.sqrt(dx*dx + dy*dy)
+}
+
+function rand (a, b) {
+  return Math.floor(Math.random() * (b - a + 1) + a)
+}
