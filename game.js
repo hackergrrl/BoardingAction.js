@@ -7,6 +7,7 @@ var Camera = require('./camera')
 var Physics = require('./physics')
 var PixiSprite = require('./pixi-sprite')
 var Starfield = require('./starfield')
+var GalaxyBoundary = require('./galaxy-boundary')
 
 // --- app setup ---
 document.body.style.margin = '0px'
@@ -33,6 +34,7 @@ Camera.install(recs, app)
 Starfield.install(recs, app)
 Physics.install(recs)
 PixiSprite.install(recs)
+GalaxyBoundary.install(recs)
 
 // --- helper functions ---
 function makeSprite (imagePath) {
@@ -49,20 +51,6 @@ function ShipController () {
 
 function CameraFollow () {
   this.target = null
-}
-
-function GalaxyBoundary () {
-  this.width = 640 * 4
-  this.height = 480 * 4
-
-  var graphics = new PIXI.Graphics()
-  graphics.lineStyle(3, 0xff0000, 1)
-  graphics.moveTo(0,0)
-  graphics.lineTo(this.width, 0)
-  graphics.lineTo(this.width, this.height)
-  graphics.lineTo(0, this.height)
-  graphics.lineTo(0,0)
-  app.stage.addChild(graphics)
 }
 
 // --- systems ---
@@ -92,17 +80,6 @@ recs.system('camera follow', [Camera, Physics, CameraFollow], function (e) {
   if (e.cameraFollow.target) {
     e.physics.x = e.cameraFollow.target.physics.x - app.renderer.width/2
     e.physics.y = e.cameraFollow.target.physics.y - app.renderer.height/2
-  }
-})
-
-recs.system('bouncy boundaries', [Physics], [GalaxyBoundary], function (e, b) {
-  if (e.physics.x > b.galaxyBoundary.width || e.physics.x < 0) {
-    e.physics.xv *= -1
-    e.physics.x += e.physics.xv
-  }
-  if (e.physics.y > b.galaxyBoundary.height || e.physics.y < 0) {
-    e.physics.yv *= -1
-    e.physics.y += e.physics.yv
   }
 })
 
