@@ -51,6 +51,20 @@ function CameraFollow () {
   this.target = null
 }
 
+function GalaxyBoundary () {
+  this.width = 640 * 4
+  this.height = 480 * 4
+
+  var graphics = new PIXI.Graphics()
+  graphics.lineStyle(3, 0xff0000, 1)
+  graphics.moveTo(0,0)
+  graphics.lineTo(this.width, 0)
+  graphics.lineTo(this.width, this.height)
+  graphics.lineTo(0, this.height)
+  graphics.lineTo(0,0)
+  app.stage.addChild(graphics)
+}
+
 // --- systems ---
 
 recs.system('ship player controls', [Physics, ShipController], function (e) {
@@ -81,6 +95,17 @@ recs.system('camera follow', [Camera, Physics, CameraFollow], function (e) {
   }
 })
 
+recs.system('bouncy boundaries', [Physics], [GalaxyBoundary], function (e, b) {
+  if (e.physics.x > b.galaxyBoundary.width || e.physics.x < 0) {
+    e.physics.xv *= -1
+    e.physics.x += e.physics.xv
+  }
+  if (e.physics.y > b.galaxyBoundary.height || e.physics.y < 0) {
+    e.physics.yv *= -1
+    e.physics.y += e.physics.yv
+  }
+})
+
 // --- entities ---
 
 recs.entity('star bg', [Starfield], function (e) {})
@@ -93,15 +118,45 @@ recs.entity('player ship', Ship, function (e) {
   e.physics.xv = 0.5
   e.physics.yv = 0
 
-  e.pixiSprite = makeSprite('assets/sprites/fighter.png')
+  e.pixiSprite = makeSprite('assets/sprites/_fighter.png')
 
   player = e
 })
 
+var FighterPrefab = function (faction, cb) {
+  recs.entity('fighter ship', [Physics, PixiSprite], function (e) {
+    e.pixiSprite = makeSprite('assets/sprites/_fighter.png')
+    e.pixiSprite.tint = 0xd91c1c
+    cb(e)
+  })
+}
+
+recs.entity('federation gunship', [Physics, PixiSprite], function (e) {
+  e.physics.x = 200
+  e.physics.y = 350
+  e.physics.xv = 0.25
+  e.physics.yv = 0
+  e.pixiSprite = makeSprite('assets/sprites/_gunship.png')
+  e.pixiSprite.tint = 0xd91c1c
+})
+FighterPrefab(0xd91c1c, function (e) {
+  e.physics.x = 280
+  e.physics.y = 280
+  e.physics.xv = 0.25
+  e.physics.yv = 0
+})
+FighterPrefab(0xd91c1c, function (e) {
+  e.physics.x = 280
+  e.physics.y = 420
+  e.physics.xv = 0.25
+  e.physics.yv = 0
+})
+
+
 for (var i = 0; i < 4; i++) {
   recs.entity('space station', [Physics, PixiSprite], function (e) {
-    e.physics.x = Math.random() * 640 * 1.5
-    e.physics.y = Math.random() * 480 * 1.5
+    e.physics.x = Math.random() * 640 * 4
+    e.physics.y = Math.random() * 480 * 4
     e.physics.xv = 0
     e.physics.yv = 0
     e.physics.rotVel = Math.random() * 0.002 - 0.001
@@ -113,6 +168,8 @@ for (var i = 0; i < 4; i++) {
 recs.entity('camera', [Physics, Camera, CameraFollow], function (e) {
   e.cameraFollow.target = player
 })
+
+recs.entity('galaxy boundary indicator', [GalaxyBoundary], function () {})
 
 // --- run game ---
 
