@@ -128,7 +128,15 @@ FighterPrefab(0xd91c1c, function (e) {
   e.physics.xv = 0.25
   e.physics.yv = 0
 })
-
+recs.entity('civilian cargo ship', [Physics, PixiSprite], function (e) {
+  e.physics.x = 100
+  e.physics.y = 100
+  e.physics.xv = 0.15
+  e.physics.yv = 0.15
+  e.physics.rot = Math.PI / 4
+  e.pixiSprite = makeSprite('assets/sprites/_cargoship.png')
+  e.pixiSprite.tint = 0xffff4e
+})
 
 for (var i = 0; i < 4; i++) {
   recs.entity('space station', [Physics, PixiSprite], function (e) {
