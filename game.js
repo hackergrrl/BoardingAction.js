@@ -30,10 +30,10 @@ var ctl = kb({
 var mouse = mousePos(app.view)
 
 // --- install systems ---
-Camera.install(recs, app)
 Starfield.install(recs, app)
 Physics.install(recs)
 PixiSprite.install(recs)
+Camera.install(recs, app)
 GalaxyBoundary.install(recs)
 
 // --- helper functions ---
@@ -100,13 +100,14 @@ recs.entity('player ship', Ship, function (e) {
   player = e
 })
 
-for (var i = 0; i < 4; i++) {
+for (var i = 0; i < 6; i++) {
 spawnFormation(
   Math.random()*640*4,
   Math.random()*480*4,
   Math.random()*Math.PI*2,
   rand(0, 1) * 2 + 1,
-  Math.random() * 64)
+  Math.random() * 64,
+  Math.random() < 0.5 ? 'federation' : 'neutral')
 }
 
 function FighterPrefab (faction, cb) {
@@ -133,7 +134,7 @@ function CargoshipPrefab (faction, cb) {
   })
 }
 
-function spawnFormation (x, y, rot, num, padding) {
+function spawnFormation (x, y, rot, num, padding, faction) {
   var prefabs = {
     'fighter': FighterPrefab,
     'gunship': GunshipPrefab,
@@ -144,7 +145,11 @@ function spawnFormation (x, y, rot, num, padding) {
   var minor = num - major
   console.log(major, minor)
 
-  var tint = Math.random() < 0.5 ? 0xffff4e : 0xd91c1c
+  var tint = (faction === 'neutral' ? 0xffff4e : 0xd91c1c)
+
+  if (faction === 'federation') {
+    num = Math.max(num, 3)
+  }
 
   var ships = []
   var radii = []
