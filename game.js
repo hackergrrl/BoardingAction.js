@@ -98,6 +98,18 @@ recs.entity('player ship', Ship, function (e) {
   player = e
 })
 
+for (var i = 0; i < 4; i++) {
+  recs.entity('space station', [Physics, PixiSprite], function (e) {
+    e.physics.x = Math.random() * 640 * 1.5
+    e.physics.y = Math.random() * 480 * 1.5
+    e.physics.xv = 0
+    e.physics.yv = 0
+    e.physics.rotVel = Math.random() * 0.002 - 0.001
+
+    e.pixiSprite = makeSprite('assets/sprites/station.png')
+  })
+}
+
 recs.entity('camera', [Physics, Camera, CameraFollow], function (e) {
   e.cameraFollow.target = player
 })
