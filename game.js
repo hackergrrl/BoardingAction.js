@@ -141,15 +141,15 @@ function spawnFormation (x, y, rot, num, padding, faction) {
     'cargo': CargoshipPrefab
   }
 
+  if (faction === 'federation') {
+    num = Math.max(num, 3)
+  }
+
   var major = Math.min(num, Math.random() < 0.75 ? 1 : 3)
   var minor = num - major
   console.log(major, minor)
 
   var tint = (faction === 'neutral' ? 0xffff4e : 0xd91c1c)
-
-  if (faction === 'federation') {
-    num = Math.max(num, 3)
-  }
 
   var ships = []
   var radii = []

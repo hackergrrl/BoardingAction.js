@@ -1,4 +1,5 @@
 var Physics = require('./physics')
+var PixiSprite = require('./pixi-sprite')
 
 function GalaxyBoundary () {
   this.width = 640 * 4
@@ -15,17 +16,29 @@ function GalaxyBoundary () {
 }
 
 GalaxyBoundary.install = function (recs) {
-  recs.system('bouncy edges', [Physics], [GalaxyBoundary], function (e, b) {
-    if (e.physics.x > b.galaxyBoundary.width || e.physics.x < 0) {
-      e.physics.xv *= -1
-      e.physics.x += e.physics.xv
-      e.physics.xv *= 0.3
+  recs.system('teleport edges', [Physics, PixiSprite], [GalaxyBoundary], function (e, b) {
+    if (e.physics.x < 0) {
+      e.physics.x += b.galaxyBoundary.width
     }
-    if (e.physics.y > b.galaxyBoundary.height || e.physics.y < 0) {
-      e.physics.yv *= -1
-      e.physics.y += e.physics.yv
-      e.physics.yv *= 0.3
+    if (e.physics.x > b.galaxyBoundary.width) {
+      e.physics.x -= b.galaxyBoundary.width
     }
+    if (e.physics.y < 0) {
+      e.physics.y += b.galaxyBoundary.height
+    }
+    if (e.physics.y > b.galaxyBoundary.height) {
+      e.physics.y -= b.galaxyBoundary.height
+    }
+    // if (e.physics.x > b.galaxyBoundary.width || e.physics.x < 0) {
+    //   e.physics.xv *= -1
+    //   e.physics.x += e.physics.xv
+    //   e.physics.xv *= 0.3
+    // }
+    // if (e.physics.y > b.galaxyBoundary.height || e.physics.y < 0) {
+    //   e.physics.yv *= -1
+    //   e.physics.y += e.physics.yv
+    //   e.physics.yv *= 0.3
+    // }
   })
 }
 
