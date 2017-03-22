@@ -8,6 +8,7 @@ var Physics = require('./physics')
 var PixiSprite = require('./pixi-sprite')
 var Starfield = require('./starfield')
 var GalaxyBoundary = require('./galaxy-boundary')
+var MapHud = require('./map-hud')
 
 // --- app setup ---
 document.body.style.margin = '0px'
@@ -35,6 +36,7 @@ Physics.install(recs)
 PixiSprite.install(recs)
 Camera.install(recs, app)
 GalaxyBoundary.install(recs)
+MapHud.install(recs, app)
 
 // --- helper functions ---
 function makeSprite (imagePath) {
@@ -206,6 +208,8 @@ recs.entity('camera', [Physics, Camera, CameraFollow], function (e) {
 })
 
 recs.entity('galaxy boundary indicator', [GalaxyBoundary], function () {})
+
+recs.entity('map hud', [MapHud], function (){})
 
 // --- run game ---
 
