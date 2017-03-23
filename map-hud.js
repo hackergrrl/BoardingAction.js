@@ -45,10 +45,11 @@ MapHud.install = function (recs, app) {
     if (!m.mapHud.blips[s.id]) {
       var blip = new PIXI.Graphics()
       blip.beginFill(s.pixiSprite.tint)
-      var size = Math.max(4, Math.floor(s.pixiSprite.texture.baseTexture.width * 0.07))
       if (s.ship.station) {
+        var size = 5
         blip.drawCircle(0, 0, size)
       } else {
+        var size = Math.floor(Math.max(4, s.pixiSprite.texture.baseTexture.width * 0.08))
         blip.moveTo(0, -size*0.3)
         blip.lineTo(size, 0)
         blip.lineTo(0, size*0.3)
