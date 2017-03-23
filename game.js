@@ -33,14 +33,6 @@ var ctl = kb({
 })
 var mouse = mousePos(app.view)
 
-// --- install systems ---
-Starfield.install(recs, app)
-Physics.install(recs)
-PixiSprite.install(recs)
-Camera.install(recs, app)
-GalaxyBoundary.install(recs)
-MapHud.install(recs, app)
-
 // --- helper functions ---
 function makeSprite (imagePath) {
   var sprite = PIXI.Sprite.fromImage(imagePath)
@@ -59,6 +51,21 @@ function CameraFollow () {
 }
 
 // --- systems ---
+
+PixiSprite.install(recs)
+GalaxyBoundary.install(recs)
+
+recs.system('camera follow', [Camera, Physics, CameraFollow], function (e) {
+  if (e.cameraFollow.target) {
+    e.physics.x = e.cameraFollow.target.physics.x - app.renderer.width/2
+    e.physics.y = e.cameraFollow.target.physics.y - app.renderer.height/2
+  }
+})
+
+Camera.install(recs, app)
+
+Starfield.install(recs, app)
+MapHud.install(recs, app)
 
 recs.system('ship player controls', [Physics, ShipController], function (e) {
   var speed = 0.03
@@ -81,12 +88,7 @@ recs.system('ship player controls', [Physics, ShipController], function (e) {
   e.physics.rot = Math.atan2(dy, dx)
 })
 
-recs.system('camera follow', [Camera, Physics, CameraFollow], function (e) {
-  if (e.cameraFollow.target) {
-    e.physics.x = e.cameraFollow.target.physics.x - app.renderer.width/2
-    e.physics.y = e.cameraFollow.target.physics.y - app.renderer.height/2
-  }
-})
+Physics.install(recs)
 
 // --- entities ---
 
