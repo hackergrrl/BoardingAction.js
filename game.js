@@ -10,6 +10,7 @@ var Starfield = require('./starfield')
 var GalaxyBoundary = require('./galaxy-boundary')
 var MapHud = require('./map-hud')
 var Ship = require('./ship')
+var Weapons = require('./weapons')
 
 // --- app setup ---
 document.body.style.margin = '0px'
@@ -90,17 +91,29 @@ recs.system('ship player controls', [Physics, ShipController], function (e) {
 
 Physics.install(recs)
 
+Weapons.install(recs, app)
+
 // --- entities ---
 
 recs.entity('star bg', [Starfield], function (e) {})
 
-recs.entity('player ship', [Physics, PixiSprite, Ship, ShipController], function (e) {
+recs.entity('player ship', [Physics, PixiSprite, Ship, ShipController, Weapons], function (e) {
   e.physics.x = 300
   e.physics.y = 150
   e.physics.xv = 0.5
   e.physics.yv = 0
 
   e.pixiSprite = makeSprite('assets/sprites/_fighter.png')
+
+  e.weapons.attach('Fighter MG', {
+    x: 0,
+    y: 0,
+    rot: 0,
+    fixed: true
+  })
+
+  console.log('1')
+  e.emit('fire', 0)
 
   player = e
 })
