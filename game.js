@@ -9,6 +9,7 @@ var PixiSprite = require('./pixi-sprite')
 var Starfield = require('./starfield')
 var GalaxyBoundary = require('./galaxy-boundary')
 var MapHud = require('./map-hud')
+var Ship = require('./ship')
 
 // --- app setup ---
 document.body.style.margin = '0px'
@@ -18,6 +19,8 @@ var app = new PIXI.Application(window.innerWidth, window.innerHeight, {
 })
 document.body.appendChild(app.view)
 global.app = app
+
+global.player = null
 
 // -- controls setup ---
 var ctl = kb({
@@ -89,9 +92,7 @@ recs.system('camera follow', [Camera, Physics, CameraFollow], function (e) {
 
 recs.entity('star bg', [Starfield], function (e) {})
 
-var Ship = [Physics, PixiSprite, ShipController]
-var player
-recs.entity('player ship', Ship, function (e) {
+recs.entity('player ship', [Physics, PixiSprite, Ship, ShipController], function (e) {
   e.physics.x = 300
   e.physics.y = 150
   e.physics.xv = 0.5
@@ -113,7 +114,7 @@ spawnFormation(
 }
 
 function FighterPrefab (faction, cb) {
-  recs.entity('fighter ship', [Physics, PixiSprite], function (e) {
+  recs.entity('fighter ship', [Physics, PixiSprite, Ship], function (e) {
     e.pixiSprite = makeSprite('assets/sprites/_fighter.png')
     e.pixiSprite.tint = faction
     cb(e)
@@ -121,7 +122,7 @@ function FighterPrefab (faction, cb) {
 }
 
 function GunshipPrefab (faction, cb) {
-  recs.entity('gunship', [Physics, PixiSprite], function (e) {
+  recs.entity('gunship', [Physics, PixiSprite, Ship], function (e) {
     e.pixiSprite = makeSprite('assets/sprites/_gunship.png')
     e.pixiSprite.tint = faction
     cb(e)
@@ -129,7 +130,7 @@ function GunshipPrefab (faction, cb) {
 }
 
 function CargoshipPrefab (faction, cb) {
-  recs.entity('cargo ship', [Physics, PixiSprite], function (e) {
+  recs.entity('cargo ship', [Physics, PixiSprite, Ship], function (e) {
     e.pixiSprite = makeSprite('assets/sprites/_cargoship.png')
     e.pixiSprite.tint = faction
     cb(e)
@@ -149,7 +150,6 @@ function spawnFormation (x, y, rot, num, padding, faction) {
 
   var major = Math.min(num, Math.random() < 0.75 ? 1 : 3)
   var minor = num - major
-  console.log(major, minor)
 
   var tint = (faction === 'neutral' ? 0xffff4e : 0xd91c1c)
 
@@ -192,7 +192,7 @@ function spawnFormation (x, y, rot, num, padding, faction) {
 // 0xd91c1c
 
 for (var i = 0; i < 4; i++) {
-  recs.entity('space station', [Physics, PixiSprite], function (e) {
+  recs.entity('space station', [Physics, PixiSprite, Ship], function (e) {
     e.physics.x = Math.random() * 640 * 4
     e.physics.y = Math.random() * 480 * 4
     e.physics.xv = 0
