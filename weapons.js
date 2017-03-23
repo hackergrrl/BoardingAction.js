@@ -1,4 +1,5 @@
 var Physics = require('./physics')
+var PixiSprite = require('./pixi-sprite')
 var WeaponDefs = require('./weapon-defs')
 var ProjectileDefs = require('./projectile-defs')
 
@@ -29,6 +30,32 @@ Weapons.install = function (recs, app) {
     idx = idx || 0
 
     var weapon = e.weapons.attached[idx]
+    var weaponDef = WeaponDefs[weapon.def]
+    var projDef = ProjectileDefs[weaponDef.projectileDef]
+
+    var now = (new Date()).getTime()
+    if (now - weapon.lastFireTime > weaponDef.fireRate) {
+      weapon.lastFireTime = now
+    } else {
+      return
+    }
+
+    // TODO: maybe fire an event /w the projectile?
+
+    recs.entity('projectile', [Physics, PixiSprite], function (p) {
+      var proj = new PIXI.Graphics()
+      proj.lineStyle(projDef.lineWidth, projDef.lineColor, 1)
+      proj.moveTo(0, 0)
+      proj.lineTo(projDef.lineLength, 0)
+      app.stage.addChild(proj)
+      p.pixiSprite = proj
+
+      p.physics.x = e.physics.x
+      p.physics.y = e.physics.y
+      p.physics.rot = e.physics.rot
+      p.physics.xv = Math.cos(p.physics.rot) * projDef.speed
+      p.physics.yv = Math.sin(p.physics.rot) * projDef.speed
+    })
     console.log('bang bang! shot a', WeaponDefs[weapon.def].projectileDef, 'from a', weapon.def)
   })
 }

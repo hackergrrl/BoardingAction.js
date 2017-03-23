@@ -30,7 +30,7 @@ var ctl = kb({
   'S': 'backward',
   'D': 'right'
   // '<left>': 'strafe_left'
-// , '<mouse 1>': 'fire'
+, '<mouse 1>': 'fire'
 })
 var mouse = mousePos(app.view)
 
@@ -87,6 +87,10 @@ recs.system('ship player controls', [Physics, ShipController], function (e) {
   var dx = mouse[0] - app.renderer.width/2
   var dy = mouse[1] - app.renderer.height/2
   e.physics.rot = Math.atan2(dy, dx)
+
+  if (ctl.fire) {
+    e.emit('fire', 0)
+  }
 })
 
 Physics.install(recs)
@@ -111,9 +115,6 @@ recs.entity('player ship', [Physics, PixiSprite, Ship, ShipController, Weapons],
     rot: 0,
     fixed: true
   })
-
-  console.log('1')
-  e.emit('fire', 0)
 
   player = e
 })
