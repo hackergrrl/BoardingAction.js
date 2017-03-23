@@ -45,8 +45,15 @@ MapHud.install = function (recs, app) {
     if (!m.mapHud.blips[s.id]) {
       var blip = new PIXI.Graphics()
       blip.beginFill(s.pixiSprite.tint)
-      var size = Math.floor(s.pixiSprite.texture.baseTexture.width * 0.03)
-      blip.drawCircle(0, 0, size)
+      var size = Math.max(4, Math.floor(s.pixiSprite.texture.baseTexture.width * 0.07))
+      if (s.ship.station) {
+        blip.drawCircle(0, 0, size)
+      } else {
+        blip.moveTo(0, -size*0.3)
+        blip.lineTo(size, 0)
+        blip.lineTo(0, size*0.3)
+        blip.lineTo(0, -size*0.3)
+      }
       blip.endFill()
       m.mapHud.addChild(blip)
       m.mapHud.blips[s.id] = blip
@@ -54,6 +61,7 @@ MapHud.install = function (recs, app) {
 
     m.mapHud.blips[s.id].x = x
     m.mapHud.blips[s.id].y = y
+    m.mapHud.blips[s.id].rotation = s.physics.rot
   })
 }
 

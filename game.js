@@ -198,6 +198,7 @@ for (var i = 0; i < 4; i++) {
     e.physics.xv = 0
     e.physics.yv = 0
     e.physics.rotVel = Math.random() * 0.002 - 0.001
+    e.ship.station = true
 
     e.pixiSprite = makeSprite('assets/sprites/station.png')
   })
