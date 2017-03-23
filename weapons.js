@@ -30,6 +30,8 @@ Weapons.install = function (recs, app) {
     idx = idx || 0
 
     var weapon = e.weapons.attached[idx]
+    if (!weapon) return
+
     var weaponDef = WeaponDefs[weapon.def]
     var projDef = ProjectileDefs[weaponDef.projectileDef]
 
@@ -43,10 +45,10 @@ Weapons.install = function (recs, app) {
     // TODO: maybe fire an event /w the projectile?
 
     recs.entity('projectile', [Physics, PixiSprite], function (p) {
-      var proj = new PIXI.Graphics()
-      proj.lineStyle(projDef.lineWidth, projDef.lineColor, 1)
-      proj.moveTo(0, 0)
-      proj.lineTo(projDef.lineLength, 0)
+      var proj = new PIXI.Sprite.fromImage('assets/sprites/bullet.png')
+      proj.scale.x = projDef.lineLength / 32
+      proj.scale.y = projDef.lineWidth
+      proj.tint = projDef.lineColor
       app.stage.addChild(proj)
       p.pixiSprite = proj
 
@@ -56,7 +58,7 @@ Weapons.install = function (recs, app) {
       p.physics.xv = Math.cos(p.physics.rot) * projDef.speed
       p.physics.yv = Math.sin(p.physics.rot) * projDef.speed
     })
-    console.log('bang bang! shot a', WeaponDefs[weapon.def].projectileDef, 'from a', weapon.def)
+    // console.log('bang bang! shot a', WeaponDefs[weapon.def].projectileDef, 'from a', weapon.def)
   })
 }
 
