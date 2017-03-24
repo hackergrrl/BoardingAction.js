@@ -18,7 +18,7 @@
     "kb-controls": "^0.2.0",
     "mouse-position": "^2.0.1",
     "pixi.js": "^4.4.2",
-    "recs": "^0.2.1"
+    "recs": "^0.2.2"
   },
   "devDependencies": {
     "standard": "~8.3.0"
