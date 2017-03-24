@@ -2,6 +2,7 @@ var Physics = require('./physics')
 var PixiSprite = require('./pixi-sprite')
 var WeaponDefs = require('./weapon-defs')
 var ProjectileDefs = require('./projectile-defs')
+var rotatePoint = require('./rotate-point')
 
 function Weapons () {
   this.attached = []
@@ -52,8 +53,11 @@ Weapons.install = function (recs, app) {
       app.stage.addChild(proj)
       p.pixiSprite = proj
 
-      p.physics.x = e.physics.x
-      p.physics.y = e.physics.y
+      var pt = rotatePoint(weapon.x, weapon.y, e.physics.rot)
+      // var pt = rotatePoint(0, 0, e.physics.rot)
+
+      p.physics.x = e.physics.x + pt[0]
+      p.physics.y = e.physics.y + pt[1]
       p.physics.rot = e.physics.rot
       p.physics.xv = Math.cos(p.physics.rot) * projDef.speed
       p.physics.yv = Math.sin(p.physics.rot) * projDef.speed

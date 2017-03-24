@@ -89,7 +89,8 @@ recs.system('ship player controls', [Physics, ShipController], function (e) {
   e.physics.rot = Math.atan2(dy, dx)
 
   if (ctl.fire) {
-    e.emit('fire', 0)
+    e.emit('fire-weapon', 0)
+    e.emit('fire-weapon', 1)
   }
 })
 
@@ -110,8 +111,14 @@ recs.entity('player ship', [Physics, PixiSprite, Ship, ShipController, Weapons],
   e.pixiSprite = makeSprite('assets/sprites/_fighter.png')
 
   e.weapons.attach('Fighter MG', {
-    x: 0,
-    y: 0,
+    x: -9,
+    y: 9,
+    rot: 0,
+    fixed: true
+  })
+  e.weapons.attach('Fighter MG', {
+    x: -9,
+    y: -9,
     rot: 0,
     fixed: true
   })
