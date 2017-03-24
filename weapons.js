@@ -2,6 +2,7 @@ var Physics = require('./physics')
 var PixiSprite = require('./pixi-sprite')
 var WeaponDefs = require('./weapon-defs')
 var ProjectileDefs = require('./projectile-defs')
+var Projectile = require ('./projectile')
 var rotatePoint = require('./rotate-point')
 
 function Weapons () {
@@ -45,7 +46,7 @@ Weapons.install = function (recs, app) {
 
     // TODO: maybe fire an event /w the projectile?
 
-    recs.entity('projectile', [Physics, PixiSprite], function (p) {
+    recs.entity('projectile', [Physics, PixiSprite, Projectile], function (p) {
       var proj = new PIXI.Sprite.fromImage('assets/sprites/bullet.png')
       proj.scale.x = projDef.lineLength / 32
       proj.scale.y = projDef.lineWidth
