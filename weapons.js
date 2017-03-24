@@ -54,6 +54,8 @@ Weapons.install = function (recs, app) {
       app.stage.addChild(proj)
       p.pixiSprite = proj
 
+      p.projectile.owner = e
+
       var pt = rotatePoint(weapon.x, weapon.y, e.physics.rot)
       // var pt = rotatePoint(0, 0, e.physics.rot)
 

@@ -11,6 +11,7 @@ var GalaxyBoundary = require('./galaxy-boundary')
 var MapHud = require('./map-hud')
 var Ship = require('./ship')
 var Weapons = require('./weapons')
+var Projectile = require ('./projectile')
 
 // --- app setup ---
 document.body.style.margin = '0px'
@@ -97,6 +98,20 @@ recs.system('ship player controls', [Physics, ShipController], function (e) {
 Physics.install(recs)
 
 Weapons.install(recs, app)
+
+recs.system('projectile<->ship collisions',
+            [Physics, Projectile], [Physics, Ship, PixiSprite],
+            function (p, s) {
+              if (s === p.projectile.owner) return
+
+              var dx = p.physics.x - s.physics.x
+              var dy = p.physics.y - s.physics.y
+              var dist = Math.sqrt(dx*dx + dy*dy)
+
+              if (dist <= s.pixiSprite.texture.baseTexture.width*0.5) {
+                p.remove()
+              }
+            })
 
 // --- entities ---
 
