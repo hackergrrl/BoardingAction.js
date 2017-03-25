@@ -15,6 +15,7 @@ var Ship = require('./ship')
 var Weapons = require('./weapons')
 var Projectile = require ('./projectile')
 var Health = require('./health')
+var Faction = require('./faction')
 
 // --- app setup ---
 document.body.style.margin = '0px'
@@ -123,15 +124,23 @@ recs.system('projectile<->ship collisions',
 
 Ship.install(recs)
 
+// --- message handlers ---
+
+recs.recv([Faction, PixiSprite], 'change-faction', function (e) {
+  e.pixiSprite.tint = e.faction.def.color
+})
+
 // --- entities ---
 
 recs.entity('star bg', [Starfield], function (e) {})
 
-recs.entity('player ship', [Physics, PixiSprite, Ship, ShipController, Weapons, Health], function (e) {
+recs.entity('player ship', [Physics, PixiSprite, Ship, ShipController, Weapons, Health, Faction], function (e) {
   e.physics.x = 300
   e.physics.y = 150
   e.physics.xv = 20
   e.physics.yv = 0
+
+  e.faction.set('unaligned')
 
   e.pixiSprite = makeSprite('assets/sprites/_fighter.png')
 
@@ -158,11 +167,11 @@ for (var i = 0; i < 6; i++) {
     Math.random()*Math.PI*2,
     rand(0, 1) * 2 + 1,
     Math.random() * 64,
-    Math.random() < 0.5 ? 'federation' : 'neutral')
+    Math.random() < 0.5 ? 'federation' : 'unaligned')
 }
 
 for (var i = 0; i < 4; i++) {
-  recs.entity('space station', [Physics, PixiSprite, Ship], function (e) {
+  recs.entity('space station', [Physics, PixiSprite, Ship, Faction], function (e) {
     e.physics.x = Math.random() * 640 * 4
     e.physics.y = Math.random() * 480 * 4
     e.physics.xv = 0
@@ -171,6 +180,8 @@ for (var i = 0; i < 4; i++) {
     e.ship.station = true
 
     e.pixiSprite = makeSprite('assets/sprites/station.png')
+
+    e.faction.set('unaligned')
   })
 }
 
@@ -191,25 +202,25 @@ var ticker = app.ticker.add(function() {
 // --- helpers ---
 
 function FighterPrefab (faction, cb) {
-  recs.entity('fighter ship', [Physics, PixiSprite, Ship, Health], function (e) {
+  recs.entity('fighter ship', [Physics, PixiSprite, Ship, Health, Faction], function (e) {
     e.pixiSprite = makeSprite('assets/sprites/_fighter.png')
-    e.pixiSprite.tint = faction
+    e.faction.set(faction)
     cb(e)
   })
 }
 
 function GunshipPrefab (faction, cb) {
-  recs.entity('gunship', [Physics, PixiSprite, Ship, Health], function (e) {
+  recs.entity('gunship', [Physics, PixiSprite, Ship, Health, Faction], function (e) {
     e.pixiSprite = makeSprite('assets/sprites/_gunship.png')
-    e.pixiSprite.tint = faction
+    e.faction.set(faction)
     cb(e)
   })
 }
 
 function CargoshipPrefab (faction, cb) {
-  recs.entity('cargo ship', [Physics, PixiSprite, Ship, Health], function (e) {
+  recs.entity('cargo ship', [Physics, PixiSprite, Ship, Health, Faction], function (e) {
     e.pixiSprite = makeSprite('assets/sprites/_cargoship.png')
-    e.pixiSprite.tint = faction
+    e.faction.set(faction)
     cb(e)
   })
 }
@@ -228,26 +239,24 @@ function spawnFormation (x, y, rot, num, padding, faction) {
   var major = Math.min(num, Math.random() < 0.75 ? 1 : 3)
   var minor = num - major
 
-  var tint = (faction === 'neutral' ? 0xffff4e : 0xd91c1c)
-
   var ships = []
   var radii = []
 
   for (var i = 0; i < major; i++) {
     if (Math.random() < 0.5) {
-      GunshipPrefab(tint, function (e) {
+      GunshipPrefab(faction, function (e) {
         radii.push(e.pixiSprite.texture.baseTexture.width * 0.4)
         ships.push(e)
       })
     } else {
-      CargoshipPrefab(tint, function (e) {
+      CargoshipPrefab(faction, function (e) {
         radii.push(e.pixiSprite.texture.baseTexture.width * 0.4)
         ships.push(e)
       })
     }
   }
   for (var i = 0; i < minor; i++) {
-    FighterPrefab(tint, function (e) {
+    FighterPrefab(faction, function (e) {
       radii.push(e.pixiSprite.texture.baseTexture.width * 0.25)
       ships.push(e)
     })
