@@ -1,6 +1,12 @@
 var Physics = require('./physics')
 
-function PixiSprite () {
+function PixiSprite (e) {
+  var self = this
+  e.on('component removed', function (Component) {
+    if (Component === PixiSprite) {
+      e.pixiSprite.parent.removeChild(e.pixiSprite)
+    }
+  })
 }
 
 PixiSprite.install = function (recs, app) {
