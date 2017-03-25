@@ -2,7 +2,7 @@
   "name": "BoardingAction.js",
   "description": "a game about boarding spacecraft in a dangerous galaxy",
   "author": "Stephen Whitmore <sww@eight.net>",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "repository": {
     "url": "git://github.com/noffle/BoardingAction.js.git"
   },
