@@ -64,6 +64,8 @@ Weapons.install = function (recs, app) {
       p.physics.rot = e.physics.rot
       p.physics.xv = Math.cos(p.physics.rot) * projDef.speed
       p.physics.yv = Math.sin(p.physics.rot) * projDef.speed
+
+      p.projectile.lifetime = projDef.lifetime
     })
     // console.log('bang bang! shot a', WeaponDefs[weapon.def].projectileDef, 'from a', weapon.def)
   })

@@ -70,7 +70,7 @@ Starfield.install(recs, app)
 MapHud.install(recs, app)
 
 recs.system('ship player controls', [Physics, ShipController], function (e) {
-  var speed = 0.03
+  var speed = 1.0
 
   if (ctl.forward) {
     e.physics.yv -= speed
@@ -99,6 +99,8 @@ Physics.install(recs)
 
 Weapons.install(recs, app)
 
+Projectile.install(recs)
+
 recs.system('projectile<->ship collisions',
             [Physics, Projectile], [Physics, Ship, PixiSprite],
             function (p, s) {
@@ -120,7 +122,7 @@ recs.entity('star bg', [Starfield], function (e) {})
 recs.entity('player ship', [Physics, PixiSprite, Ship, ShipController, Weapons], function (e) {
   e.physics.x = 300
   e.physics.y = 150
-  e.physics.xv = 0.5
+  e.physics.xv = 20
   e.physics.yv = 0
 
   e.pixiSprite = makeSprite('assets/sprites/_fighter.png')
@@ -221,8 +223,8 @@ function spawnFormation (x, y, rot, num, padding, faction) {
     ships[i].physics.x = x + Math.cos(rot) * coords[i][0] - Math.sin(rot) * coords[i][1]
     ships[i].physics.y = y + Math.sin(rot) * coords[i][0] + Math.cos(rot) * coords[i][1]
     ships[i].physics.rot = rot
-    ships[i].physics.xv = Math.cos(rot) * 0.25
-    ships[i].physics.yv = Math.sin(rot) * 0.25
+    ships[i].physics.xv = Math.cos(rot) * 25
+    ships[i].physics.yv = Math.sin(rot) * 25
   }
 }
 
@@ -252,8 +254,8 @@ recs.entity('map hud', [MapHud], function (){})
 
 // --- run game ---
 
-app.ticker.add(function(delta) {
-  recs.tick(delta)
+var ticker = app.ticker.add(function() {
+  recs.tick(ticker.elapsedMS / 1000)
 })
 
 
