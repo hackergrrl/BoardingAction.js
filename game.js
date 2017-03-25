@@ -12,6 +12,7 @@ var MapHud = require('./map-hud')
 var Ship = require('./ship')
 var Weapons = require('./weapons')
 var Projectile = require ('./projectile')
+var Health = require('./health')
 
 // --- app setup ---
 document.body.style.margin = '0px'
@@ -101,6 +102,8 @@ Weapons.install(recs, app)
 
 Projectile.install(recs)
 
+Health.install(recs)
+
 recs.system('projectile<->ship collisions',
             [Physics, Projectile], [Physics, Ship, PixiSprite],
             function (p, s) {
@@ -111,15 +114,18 @@ recs.system('projectile<->ship collisions',
               var dist = Math.sqrt(dx*dx + dy*dy)
 
               if (dist <= s.pixiSprite.texture.baseTexture.width*0.5) {
-                p.remove()
+                s.send('collision', p)
+                p.send('collision', s)
               }
             })
+
+Ship.install(recs)
 
 // --- entities ---
 
 recs.entity('star bg', [Starfield], function (e) {})
 
-recs.entity('player ship', [Physics, PixiSprite, Ship, ShipController, Weapons], function (e) {
+recs.entity('player ship', [Physics, PixiSprite, Ship, ShipController, Weapons, Health], function (e) {
   e.physics.x = 300
   e.physics.y = 150
   e.physics.xv = 20
@@ -154,7 +160,7 @@ spawnFormation(
 }
 
 function FighterPrefab (faction, cb) {
-  recs.entity('fighter ship', [Physics, PixiSprite, Ship], function (e) {
+  recs.entity('fighter ship', [Physics, PixiSprite, Ship, Health], function (e) {
     e.pixiSprite = makeSprite('assets/sprites/_fighter.png')
     e.pixiSprite.tint = faction
     cb(e)
@@ -162,7 +168,7 @@ function FighterPrefab (faction, cb) {
 }
 
 function GunshipPrefab (faction, cb) {
-  recs.entity('gunship', [Physics, PixiSprite, Ship], function (e) {
+  recs.entity('gunship', [Physics, PixiSprite, Ship, Health], function (e) {
     e.pixiSprite = makeSprite('assets/sprites/_gunship.png')
     e.pixiSprite.tint = faction
     cb(e)
@@ -170,7 +176,7 @@ function GunshipPrefab (faction, cb) {
 }
 
 function CargoshipPrefab (faction, cb) {
-  recs.entity('cargo ship', [Physics, PixiSprite, Ship], function (e) {
+  recs.entity('cargo ship', [Physics, PixiSprite, Ship, Health], function (e) {
     e.pixiSprite = makeSprite('assets/sprites/_cargoship.png')
     e.pixiSprite.tint = faction
     cb(e)

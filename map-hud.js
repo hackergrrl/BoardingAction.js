@@ -29,6 +29,17 @@ MapHud.install = function (recs, app) {
     m.mapHud.y = c.physics.y
   })
 
+  recs.system('cleanup blips', [MapHud], function (m) {
+    for (var id in m.mapHud.blips) {
+      var blip = m.mapHud.blips[id]
+      // TODO: need 'dead' indicator in recs
+      if (!blip || !blip._manager) {
+        m.mapHud.removeChild(blip)
+        delete m.mapHud.blips[id]
+      }
+    }
+  })
+
   recs.system('manage blips', [MapHud], [Physics, Ship, PixiSprite], function (m, s) {
     var zoom = 0.05
 
