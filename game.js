@@ -3,6 +3,8 @@ var PIXI = require('pixi.js')
 var kb = require('kb-controls')
 var mousePos = require('mouse-position')
 
+var generateFormation = require('./gen-formation')
+
 var Camera = require('./camera')
 var Physics = require('./physics')
 var PixiSprite = require('./pixi-sprite')
@@ -150,14 +152,43 @@ recs.entity('player ship', [Physics, PixiSprite, Ship, ShipController, Weapons, 
 })
 
 for (var i = 0; i < 6; i++) {
-spawnFormation(
-  Math.random()*640*4,
-  Math.random()*480*4,
-  Math.random()*Math.PI*2,
-  rand(0, 1) * 2 + 1,
-  Math.random() * 64,
-  Math.random() < 0.5 ? 'federation' : 'neutral')
+  spawnFormation(
+    Math.random()*640*4,
+    Math.random()*480*4,
+    Math.random()*Math.PI*2,
+    rand(0, 1) * 2 + 1,
+    Math.random() * 64,
+    Math.random() < 0.5 ? 'federation' : 'neutral')
 }
+
+for (var i = 0; i < 4; i++) {
+  recs.entity('space station', [Physics, PixiSprite, Ship], function (e) {
+    e.physics.x = Math.random() * 640 * 4
+    e.physics.y = Math.random() * 480 * 4
+    e.physics.xv = 0
+    e.physics.yv = 0
+    e.physics.rotVel = Math.random() * 0.002 - 0.001
+    e.ship.station = true
+
+    e.pixiSprite = makeSprite('assets/sprites/station.png')
+  })
+}
+
+recs.entity('camera', [Physics, Camera, CameraFollow], function (e) {
+  e.cameraFollow.target = player
+})
+
+recs.entity('galaxy boundary indicator', [GalaxyBoundary], function () {})
+
+recs.entity('map hud', [MapHud], function (){})
+
+// --- run game ---
+
+var ticker = app.ticker.add(function() {
+  recs.tick(ticker.elapsedMS / 1000)
+})
+
+// --- helpers ---
 
 function FighterPrefab (faction, cb) {
   recs.entity('fighter ship', [Physics, PixiSprite, Ship, Health], function (e) {
@@ -234,88 +265,6 @@ function spawnFormation (x, y, rot, num, padding, faction) {
   }
 }
 
-// 0xffff4e
-// 0xd91c1c
-
-for (var i = 0; i < 4; i++) {
-  recs.entity('space station', [Physics, PixiSprite, Ship], function (e) {
-    e.physics.x = Math.random() * 640 * 4
-    e.physics.y = Math.random() * 480 * 4
-    e.physics.xv = 0
-    e.physics.yv = 0
-    e.physics.rotVel = Math.random() * 0.002 - 0.001
-    e.ship.station = true
-
-    e.pixiSprite = makeSprite('assets/sprites/station.png')
-  })
-}
-
-recs.entity('camera', [Physics, Camera, CameraFollow], function (e) {
-  e.cameraFollow.target = player
-})
-
-recs.entity('galaxy boundary indicator', [GalaxyBoundary], function () {})
-
-recs.entity('map hud', [MapHud], function (){})
-
-// --- run game ---
-
-var ticker = app.ticker.add(function() {
-  recs.tick(ticker.elapsedMS / 1000)
-})
-
-
-// Takes a list of radii and returns positions.
-// [Float] -> [[Float, Float]]
-function generateFormation (radii, padding) {
-  var res = []
-
-  if (radii.length % 2 === 0) {
-    throw new Error('must be odd number of units')
-  }
-
-  var r = radii.shift()
-  res.push([0, 0, r])
-
-  var radius = res[0] ? res[0][2] : 0
-  while (radii.length > 0) {
-    var r = radii.shift()
-
-    while (true) {
-      var x = Math.random() * radius * 2 - radius
-      var y = Math.random() * radius * 2 + r
-
-      if (!isPointOpen(x, y, r)) {
-        radius += 16
-        continue
-      }
-      else {
-        res.push([x, y, r])
-        res.push([x, -y, r])
-        radii.shift()
-        break
-      }
-    }
-  }
-
-  return res
-
-  function isPointOpen (x, y, r) {
-    for (var i=0; i < res.length; i++) {
-      var p = res[i]
-      if (distance(x, y, p[0], p[1]) < padding * 2 + r + p[2]) {
-        return false
-      }
-    }
-    return true
-  }
-}
-
-function distance (x1, y1, x2, y2) {
-  var dx = x2 - x1
-  var dy = y2 - y1
-  return Math.sqrt(dx*dx + dy*dy)
-}
 
 function rand (a, b) {
   return Math.floor(Math.random() * (b - a + 1) + a)
