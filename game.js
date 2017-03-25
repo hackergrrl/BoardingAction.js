@@ -90,8 +90,8 @@ recs.system('ship player controls', [Physics, ShipController], function (e) {
   e.physics.rot = Math.atan2(dy, dx)
 
   if (ctl.fire) {
-    e.emit('fire-weapon', 0)
-    e.emit('fire-weapon', 1)
+    e.send('fire-weapon', 0)
+    e.send('fire-weapon', 1)
   }
 })
 

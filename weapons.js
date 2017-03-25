@@ -28,7 +28,7 @@ function Weapons () {
 }
 
 Weapons.install = function (recs, app) {
-  recs.on([Physics, Weapons], 'fire-weapon', function (e, idx) {
+  recs.recv([Physics, Weapons], 'fire-weapon', function (e, idx) {
     idx = idx || 0
 
     var weapon = e.weapons.attached[idx]
