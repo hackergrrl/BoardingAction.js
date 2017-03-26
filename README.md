@@ -2,7 +2,8 @@
 
 > a game about sneaking aboard spacecraft in a dangerous galaxy
 
-Still in very early development. Also a fun testbed for the development of
+Still in very early development. Trying to see how feasible JS and npm are for
+larger modular 2D games! Also a fun testbed for the development of
 [recs](https://github.com/noffle/recs). I don't usually share my games'
 development in the open, so this is an experiment in that as well.
 
