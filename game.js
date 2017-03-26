@@ -3,7 +3,7 @@ var PIXI = require('pixi.js')
 var kb = require('kb-controls')
 var mousePos = require('mouse-position')
 
-var generateFormation = require('./gen-formation')
+var generateFormation = require('./lib/gen-formation')
 
 var Camera = require('./ecs/camera')
 var Physics = require('./ecs/physics')

@@ -3,7 +3,7 @@ var PixiSprite = require('./pixi-sprite')
 var WeaponDefs = require('../defs/weapon-defs')
 var ProjectileDefs = require('../defs/projectile-defs')
 var Projectile = require ('./projectile')
-var rotatePoint = require('../rotate-point')
+var rotatePoint = require('../lib/rotate-point')
 
 function Weapons () {
   this.attached = []
