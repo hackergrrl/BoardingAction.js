@@ -1,9 +1,9 @@
 var Physics = require('./physics')
 var PixiSprite = require('./pixi-sprite')
-var WeaponDefs = require('./weapon-defs')
-var ProjectileDefs = require('./projectile-defs')
+var WeaponDefs = require('../weapon-defs')
+var ProjectileDefs = require('../projectile-defs')
 var Projectile = require ('./projectile')
-var rotatePoint = require('./rotate-point')
+var rotatePoint = require('../rotate-point')
 
 function Weapons () {
   this.attached = []

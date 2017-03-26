@@ -5,17 +5,17 @@ var mousePos = require('mouse-position')
 
 var generateFormation = require('./gen-formation')
 
-var Camera = require('./camera')
-var Physics = require('./physics')
-var PixiSprite = require('./pixi-sprite')
-var Starfield = require('./starfield')
-var GalaxyBoundary = require('./galaxy-boundary')
-var MapHud = require('./map-hud')
-var Ship = require('./ship')
-var Weapons = require('./weapons')
-var Projectile = require ('./projectile')
-var Health = require('./health')
-var Faction = require('./faction')
+var Camera = require('./ecs/camera')
+var Physics = require('./ecs/physics')
+var PixiSprite = require('./ecs/pixi-sprite')
+var Starfield = require('./ecs/starfield')
+var GalaxyBoundary = require('./ecs/galaxy-boundary')
+var MapHud = require('./ecs/map-hud')
+var Ship = require('./ecs/ship')
+var Weapons = require('./ecs/weapons')
+var Projectile = require ('./ecs/projectile')
+var Health = require('./ecs/health')
+var Faction = require('./ecs/faction')
 
 // --- app setup ---
 document.body.style.margin = '0px'

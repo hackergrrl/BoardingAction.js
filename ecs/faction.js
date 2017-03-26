@@ -1,4 +1,4 @@
-var FactionDefs = require('./faction-defs')
+var FactionDefs = require('../faction-defs')
 
 function Faction () {
   this.def = FactionDefs['neutral']
